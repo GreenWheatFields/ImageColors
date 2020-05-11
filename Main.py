@@ -4,7 +4,7 @@ from sklearn.cluster import KMeans
 import numpy as np
 import time
 
-image = cv2.imread("Pictures\\Sgt._Pepper's_Lonely_Hearts_Club_Band.jpg")
+image = cv2.imread("Pictures\\GreenWheatFields.jpg")
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 plt.figure()
@@ -17,7 +17,7 @@ image = image.reshape((image.shape[0] * image.shape[1], 3))
 start = time.time()
 
 print("working")
-clt = KMeans(7)
+clt = KMeans(6)
 clt.fit(image)
 print("done")
 end = time.time()
@@ -31,7 +31,10 @@ def centroid_histogram(clt):
     # normalize the histogram, such that it sums to one
     hist = hist.astype("float")
     hist /= hist.sum()
-    # return the histogram
+    print(hist)
+    hist = np.sort(hist[::-1])
+    hist = hist[::-1]
+
     return hist
 
 
@@ -42,6 +45,7 @@ def plot_colors(hist, centroids):
     startX = 0
     # loop over the percentage of each cluster and the color of
     # each cluster
+
     for (percent, color) in zip(hist, centroids):
         # plot the relative percentage of each cluster
         endX = startX + (percent * 300)
@@ -49,13 +53,15 @@ def plot_colors(hist, centroids):
                       color.astype("uint8").tolist(), -1)
         startX = endX
 
+
     # return the bar chart
+
     return bar
 #want to sort by size
 hist = centroid_histogram(clt)
 bar = plot_colors(hist, clt.cluster_centers_)
 # show our color bart
 plt.figure()
-plt.axis("off")
+plt.axis("on")
 plt.imshow(bar)
 plt.show()
