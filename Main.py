@@ -16,7 +16,7 @@ def convert_image(file_path, clusters):
     print(height)
     print(width)
     print(image.shape)
-    image = cv2.resize(image, (500, 500))
+    #image = cv2.resize(image, (500, 500))
     height, width, depth = image.shape
     print(height)
     print(width)
@@ -89,13 +89,13 @@ def display_image():
     plt.figure()
     plt.axis("on")
     plt.imshow(bar)
-    plt.imsave('test.png', bar)
+    plt.imsave('TestResults\\test3.png', bar)
     plt.show()
-    plt.imsave('test.png', bar)
+
     # shows both the output and input
     plt.show()
-    time.sleep(5)
-    plt.close("all") # does not work
+    # time.sleep(5)
+    # plt.close("all") # does not work
 
 
 display_image()
