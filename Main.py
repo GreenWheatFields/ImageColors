@@ -16,7 +16,7 @@ def convert_image(file_path, clusters):
     print(height)
     print(width)
     print(image.shape)
-    image = cv2.resize(image, (1000, 1000))
+    image = cv2.resize(image, (500, 500))
     height, width, depth = image.shape
     print(height)
     print(width)
@@ -80,7 +80,7 @@ def plot_colors(hist, centroids):
 
 
 def display_image():
-    convert_image("Pictures\\pillars_of_creation.jpg", 16)
+    convert_image("Pictures\\pillars_of_creation.jpg", 4)
     # generate histogram,
     hist = centroid_histogram(clt)
     # generate barchart
@@ -89,8 +89,14 @@ def display_image():
     plt.figure()
     plt.axis("on")
     plt.imshow(bar)
+    plt.imsave('test.png', bar)
+    plt.show()
+    plt.imsave('test.png', bar)
     # shows both the output and input
     plt.show()
+    time.sleep(5)
+    plt.close("all") # does not work
 
 
 display_image()
+
