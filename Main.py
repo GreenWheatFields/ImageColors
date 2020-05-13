@@ -16,7 +16,7 @@ def convert_image(file_path, clusters):
     print(height)
     print(width)
     print(image.shape)
-    #image = cv2.resize(image, (500, 500))
+    # image = cv2.resize(image, (500, 500))
     height, width, depth = image.shape
     print(height)
     print(width)
@@ -79,8 +79,8 @@ def plot_colors(hist, centroids):
     return bar
 
 
-def display_image():
-    convert_image("Pictures\\pillars_of_creation.jpg", 4)
+def display_image(input_path, output_path, clusters):
+    convert_image(input_path, clusters)
     # generate histogram,
     hist = centroid_histogram(clt)
     # generate barchart
@@ -89,14 +89,27 @@ def display_image():
     plt.figure()
     plt.axis("on")
     plt.imshow(bar)
-    plt.imsave('TestResults\\test3.png', bar)
-    plt.show()
+    plt.imsave(output_path, bar)
+    #plt.show()
 
     # shows both the output and input
-    plt.show()
+   # plt.show()
     # time.sleep(5)
     # plt.close("all") # does not work
 
 
-display_image()
+# display_image()
 
+vidcap = cv2.VideoCapture("C:\\Users\\cuppy\\Downloads\\y2mate.com - Oh my god he on xgames vine_OWl_HlyHeVc_240p.mp4")
+success, image = vidcap.read()
+count = 0
+while success:
+  cv2.imwrite("TestResults2\\frame%d.jpg" % count, image) # save frame as JPEG file
+  success, image = vidcap.read()
+  print('Read a new frame: ', success)
+  count += 1
+count = 0
+while count < 10:
+    display_image("TestResults2\\frame%d.jpg" % count, "TestResults2\\frame%d.jpg" % count, 3) #replace image with 3 clusters
+    count += 1
+    print("done")
