@@ -3,6 +3,8 @@ import cv2
 from sklearn.cluster import KMeans
 import numpy as np
 import time
+from multiprocessing import Process
+import multiprocessing
 
 
 # input image and run kmeans
@@ -12,11 +14,6 @@ def convert_image(file_path, clusters):
 
     image = cv2.imread(file_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    height, width, depth = image.shape
-    print(height)
-    print(width)
-    print(image.shape)
-    # image = cv2.resize(image, (500, 500))
     height, width, depth = image.shape
     print(height)
     print(width)
@@ -62,16 +59,16 @@ def centroid_histogram(clt):
 def plot_colors(hist, centroids):
     # initialize the bar chart representing the relative frequency
     # of each of the colors
-    bar = np.zeros((50, 300, 3), dtype="uint8")
+    bar = np.zeros((512, 1280, 3), dtype="uint8")
     startX = 0
     # loop over the percentage of each cluster and the color of
     # each cluster
 
     for (percent, color) in zip(hist, centroids):
         # define range based on percent dominance of a color
-        endX = startX + (percent * 300)
+        endX = startX + (percent * 1280)
         # create a rectangle, define the size, covert clusters to rgb, add to barchart
-        cv2.rectangle(bar, (int(startX), 0), (int(endX), 50),
+        cv2.rectangle(bar, (int(startX), 0), (int(endX), 512),
                       color.astype("uint8").tolist(), -1)
         # define new beginning for next bar
         startX = endX
@@ -79,8 +76,11 @@ def plot_colors(hist, centroids):
     return bar
 
 
-def display_image(input_path, output_path, clusters):
-    convert_image(input_path, clusters)
+def display_image(input_path, output_path, clusters, count):
+    print("frame: {}".format(count))
+    input_path_exact = "{}\\frame%d.jpg".format(input_path) % count
+    output_path_exact = "{}\\frame%d.jpg".format(output_path) % count
+    convert_image(input_path_exact, clusters)
     # generate histogram,
     hist = centroid_histogram(clt)
     # generate barchart
@@ -88,28 +88,31 @@ def display_image(input_path, output_path, clusters):
     # show bar chart
     plt.figure()
     plt.axis("on")
-    plt.imshow(bar)
-    plt.imsave(output_path, bar)
-    #plt.show()
-
-    # shows both the output and input
-   # plt.show()
-    # time.sleep(5)
-    # plt.close("all") # does not work
+    plt.imsave(output_path_exact, bar)
+    plt.close()
+    count += 2
+    display_image(input_path, output_path, clusters, count)
 
 
-# display_image()
+def extract_frames(video_location, output_path):
+    vidcap = cv2.VideoCapture(video_location)
+    success, image = vidcap.read()
+    count = 1
+    while success:
+        cv2.imwrite("{}\\frame%d.jpg".format(output_path) % count, image)  # save frame as JPEG file
+        success, image = vidcap.read()
+        print('Read a new frame: ', success)
+        print(count)
+        count += 1
 
-vidcap = cv2.VideoCapture("C:\\Users\\cuppy\\Downloads\\y2mate.com - Oh my god he on xgames vine_OWl_HlyHeVc_240p.mp4")
-success, image = vidcap.read()
-count = 0
-while success:
-  cv2.imwrite("TestResults2\\frame%d.jpg" % count, image) # save frame as JPEG file
-  success, image = vidcap.read()
-  print('Read a new frame: ', success)
-  count += 1
-count = 0
-while count < 10:
-    display_image("TestResults2\\frame%d.jpg" % count, "TestResults2\\frame%d.jpg" % count, 3) #replace image with 3 clusters
-    count += 1
-    print("done")
+
+if __name__ == '__main__':
+    #extract_frames("somewhereinthecrowd.mp4", "input")
+    processes = []
+    for i in range(1, 3):
+        print(i)
+        p = multiprocessing.Process(target=display_image, args=("input", "output", 5, i))
+        p.start()
+        processes.append(p)
+    for process in processes:
+        process.join()
