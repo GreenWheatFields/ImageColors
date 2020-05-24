@@ -20,9 +20,9 @@ def convert_image(file_path, clusters):
     print(image.shape)
 
     # sets og image
-    plt.figure()
-    plt.axis("on")
-    plt.imshow(image)
+    # plt.figure()
+    # plt.axis("on")
+    # plt.imshow(image)
 
     # plt.show()
 
@@ -86,7 +86,7 @@ def display_image(input_path, output_path, clusters, count):
     # generate barchart
     bar = plot_colors(hist, clt.cluster_centers_)
     # show bar chart
-    plt.figure()
+    # plt.figure()
     plt.axis("on")
     plt.imsave(output_path_exact, bar)
     plt.close()
